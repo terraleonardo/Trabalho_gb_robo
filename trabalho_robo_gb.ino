@@ -24,15 +24,13 @@ int isObstaculo = 0;
 
 //===Variaveis locais do seguidor_de_linha()===
 
-//Velocidades dos motores
-#define VELOCIDADE_BASE 150
-#define VELOCIDADE_CORRECAO 80
+#define VELOCIDADE_BASE 200
+#define VELOCIDADE_CORRECAO 100
 
 //=============================================
 
 
-void setup()
-{
+void setup() {
   //Configuração dos pinos
   pinMode(LED_DEBUG, OUTPUT);
   pinMode(IR_CONTADOR_LINHA, INPUT);
@@ -50,10 +48,8 @@ void setup()
   attachInterrupt(digitalPinToInterrupt(IR_CONTADOR_LINHA), contador_linha, RISING);
 }
 
-void loop()
-{
-  switch(estado)
-  {
+void loop() {
+  switch(estado) {
     case SEGUIR_LINHA:
       seguidor_de_linha();
       break;
@@ -66,41 +62,42 @@ void loop()
   }
 }
 
-void seguidor_de_linha()
-{
+void seguidor_de_linha() {
   int sensorDir = digitalRead(IR_SEGUIDOR_DIREITO);
   int sensorEsq = digitalRead(IR_SEGUIDOR_ESQUERDO);
   
-  // Linha centralizada
+  // Linha centralizada - segue em frente
   if (sensorEsq == 1 && sensorDir == 1) {
     motorEsquerdo(VELOCIDADE_BASE);
     motorDireito(VELOCIDADE_BASE);
   }
   
-  // Linha deslocada para a esquerda
+  // Linha deslocada para a esquerda - roda esquerda desacelera
   else if (sensorEsq == 0 && sensorDir == 1) {
     motorEsquerdo(VELOCIDADE_CORRECAO);
     motorDireito(VELOCIDADE_BASE);
   }
 
-  // Linha deslocada para a direita
+  // Linha deslocada para a direita - roda direita desacelera
   else if (sensorEsq == 1 && sensorDir == 0) {
     motorEsquerdo(VELOCIDADE_BASE);
     motorDireito(VELOCIDADE_CORRECAO);
   }
 }
   
-  
-void realizar_a_curva()
-{
-  //Fazer a curva
+void realizar_a_curva() {
+  // Curva para esquerda - Roda direita p/ frente e esquerda p/ trás 
+  motorDireito(VELOCIDADE_BASE);
+  motorEsquerdo(-VELOCIDADE_BASE);
+
+  delay(100); // CALIBRAR O TEMPO PARA ELE GIRAR 90°
+
   estado = SEGUIR_LINHA;
 }
 
   
   
-void parar()
-{
+void parar() {
   analogWrite(PWM_MOTOR_DIREITO, 0);
   analogWrite(PWM_MOTOR_ESQUERDO, 0);
   
@@ -112,8 +109,7 @@ void parar()
 
   
   
-void contador_linha()
-{
+void contador_linha() {
   iCount++;
   
   if(iCount == 3){
@@ -124,8 +120,7 @@ void contador_linha()
 
   
   
-void obstaculo()
-{
+void obstaculo() {
   isObstaculo =! isObstaculo;
   
   if(isObstaculo)
