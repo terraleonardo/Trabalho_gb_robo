@@ -24,8 +24,8 @@ int isObstaculo = 0;
 
 //===Variaveis locais do seguidor_de_linha()===
 
-#define VELOCIDADE_BASE 200
-#define VELOCIDADE_CORRECAO 100
+#define VELOCIDADE_BASE 180
+#define VELOCIDADE_CORRECAO 140
 
 //=============================================
 
@@ -87,15 +87,14 @@ void seguidor_de_linha() {
   
 void realizar_a_curva() {
   // Curva para esquerda - Roda direita p/ frente e esquerda p/ trás 
-  motorDireito(VELOCIDADE_BASE);
-  motorEsquerdo(-VELOCIDADE_BASE);
+  motorDireito(VELOCIDADE_CORRECAO);
+  motorEsquerdo(-VELOCIDADE_CORRECAO);
 
-  delay(100); // CALIBRAR O TEMPO PARA ELE GIRAR 90°
+  delay(150); // CALIBRAR O TEMPO PARA ELE GIRAR 90°
 
   estado = SEGUIR_LINHA;
 }
 
-  
   
 void parar() {
   analogWrite(PWM_MOTOR_DIREITO, 0);
@@ -108,7 +107,6 @@ void parar() {
 }
 
   
-  
 void contador_linha() {
   iCount++;
   
@@ -118,7 +116,6 @@ void contador_linha() {
   }
 }
 
-  
   
 void obstaculo() {
   isObstaculo =! isObstaculo;
