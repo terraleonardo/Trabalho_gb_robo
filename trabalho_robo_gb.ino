@@ -24,8 +24,8 @@ int isObstaculo = 0;
 
 //===Variaveis locais do seguidor_de_linha()===
 
-#define VELOCIDADE_BASE 180
-#define VELOCIDADE_CORRECAO 140
+#define VELOCIDADE_BASE 220
+#define VELOCIDADE_CORRECAO 75
 
 //=============================================
 
@@ -65,21 +65,21 @@ void loop() {
 void seguidor_de_linha() {
   int sensorDir = digitalRead(IR_SEGUIDOR_DIREITO);
   int sensorEsq = digitalRead(IR_SEGUIDOR_ESQUERDO);
-  
+
   // Linha centralizada - segue em frente
-  if (sensorEsq == 1 && sensorDir == 1) {
+  if (sensorEsq == 0 && sensorDir == 0) {
     motorEsquerdo(VELOCIDADE_BASE);
     motorDireito(VELOCIDADE_BASE);
   }
   
   // Linha deslocada para a esquerda - roda esquerda desacelera
-  else if (sensorEsq == 0 && sensorDir == 1) {
+  else if (sensorEsq == 1 && sensorDir == 0) {
     motorEsquerdo(VELOCIDADE_CORRECAO);
     motorDireito(VELOCIDADE_BASE);
   }
 
   // Linha deslocada para a direita - roda direita desacelera
-  else if (sensorEsq == 1 && sensorDir == 0) {
+  else if (sensorEsq == 0 && sensorDir == 1) {
     motorEsquerdo(VELOCIDADE_BASE);
     motorDireito(VELOCIDADE_CORRECAO);
   }
@@ -87,10 +87,16 @@ void seguidor_de_linha() {
   
 void realizar_a_curva() {
   // Curva para esquerda - Roda direita p/ frente e esquerda p/ trás 
-  motorDireito(VELOCIDADE_CORRECAO);
-  motorEsquerdo(-VELOCIDADE_CORRECAO);
+  parar();
+  delay(500);
 
-  delay(150); // CALIBRAR O TEMPO PARA ELE GIRAR 90°
+  motorDireito(VELOCIDADE_BASE);
+  motorEsquerdo(-VELOCIDADE_BASE);
+
+  delay(2000); // CALIBRAR O TEMPO PARA ELE GIRAR 90°
+
+  parar();
+  delay(500);
 
   estado = SEGUIR_LINHA;
 }
@@ -109,6 +115,23 @@ void parar() {
   
 void contador_linha() {
   iCount++;
+  delay(300);
+  
+  if(iCount == 1){
+    digitalWrite(LED_DEBUG, HIGH);
+    delay(300);
+    digitalWrite(LED_DEBUG, LOW);
+  }
+
+  if(iCount == 2){
+    digitalWrite(LED_DEBUG, HIGH);
+    delay(300);
+    digitalWrite(LED_DEBUG, LOW);
+    delay(300);
+    digitalWrite(LED_DEBUG, HIGH);
+    delay(300);
+    digitalWrite(LED_DEBUG, LOW);
+  }
   
   if(iCount == 3){
     estado = CURVA;
@@ -118,7 +141,7 @@ void contador_linha() {
 
   
 void obstaculo() {
-  isObstaculo =! isObstaculo;
+  isObstaculo =! isObstaculo;                                                                       
   
   if(isObstaculo)
     estado = PARADA;
